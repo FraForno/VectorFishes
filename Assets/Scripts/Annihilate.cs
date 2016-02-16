@@ -7,6 +7,13 @@ public class Annihilate : MonoBehaviour {
     {
         if (other.gameObject.tag.Equals("Fish", System.StringComparison.Ordinal))
         {
+            //deactivate collision and hide sprite
+            other.gameObject.GetComponent<BoxCollider2D>().isTrigger = true;
+            other.gameObject.GetComponent<SpriteRenderer>().enabled = false;
+
+            //play escape sound
+            other.gameObject.GetComponent<Fish>().PlayEscapeSound();
+
             //update score
             GameObject spammy = GameObject.Find("MrSpammy");
             Generator spammyscript = spammy.GetComponent<Generator>();
@@ -23,6 +30,6 @@ public class Annihilate : MonoBehaviour {
                 spammyscript.score -= 50;
         }
 
-        Destroy(other.gameObject);
+        Destroy(other.gameObject, 1.0f); //delay of 1 sec to let the escape sound finish
     }
 }

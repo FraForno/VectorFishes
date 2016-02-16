@@ -51,7 +51,7 @@ public class Generator : MonoBehaviour {
         while (true)
         {
             Instantiate(fish, new Vector3(Random.Range(FishRangeX * -1, FishRangeX), Random.Range(FishRangeY * -1, FishRangeY), 0), Quaternion.identity);
-            if (FishGenDelay > 0.3f)
+            if (FishGenDelay > 0.2f)
                 FishGenDelay -= 0.01f;
             yield return new WaitForSeconds(FishGenDelay);
         }

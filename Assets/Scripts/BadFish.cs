@@ -15,7 +15,7 @@ public class BadFish : MonoBehaviour
     public uint points = 20;
 
     public GameObject deadFish;
-    public Object rewardPrefab = Resources.Load("Prefabs/Reward");
+    public Object rewardPrefab;
 
     int flip = 1;
     int fishType = 4;
@@ -23,6 +23,8 @@ public class BadFish : MonoBehaviour
 
     void Start()
     {
+        rewardPrefab = Resources.Load("Prefabs/Reward");
+
         // 50% chance of starting with rightwards motion
         if (Random.value > 0.5f)
         {

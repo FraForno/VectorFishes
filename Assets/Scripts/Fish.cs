@@ -11,11 +11,12 @@ public class Fish : MonoBehaviour {
     public float flipFreq = 3.0f;
 
     public AudioClip[] clips = new AudioClip[3];
+    public AudioClip escapeclip;
     public Sprite[] sprites = new Sprite[3];
     public uint[] points = { 10, 20, 30 };
 
     public GameObject deadFish;
-    public Object rewardPrefab = Resources.Load("Prefabs/Reward");
+    public Object rewardPrefab;
 
     int flip = 1;
     int fishType = 0;
@@ -23,6 +24,8 @@ public class Fish : MonoBehaviour {
 
     void Start()
     {
+        rewardPrefab = Resources.Load("Prefabs/Reward");
+
         //random fish type
         int perc = Random.Range(0, 100);
 
@@ -63,6 +66,12 @@ public class Fish : MonoBehaviour {
             flip = flip * -1;
             this.GetComponent<Rigidbody2D>().velocity = (velocity * flip);
         }
+    }
+
+    public void PlayEscapeSound()
+    {
+        this.GetComponent<AudioSource>().clip = escapeclip;
+        this.GetComponent<AudioSource>().Play();
     }
 
     Reward InstantiateAndInitReward(int iType, Vector3 position, Quaternion rotation)
