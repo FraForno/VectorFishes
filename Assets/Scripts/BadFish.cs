@@ -23,7 +23,7 @@ public class BadFish : MonoBehaviour
 
     void Start()
     {
-        rewardPrefab = Resources.Load("Prefabs/Reward");
+        //rewardPrefab = Resources.Load("Prefabs/Reward");
 
         // 50% chance of starting with rightwards motion
         if (Random.value > 0.5f)
@@ -58,6 +58,11 @@ public class BadFish : MonoBehaviour
         Reward rw = obj.GetComponent<Reward>();
         rw.fishType = 3;
         return rw;
+    }
+
+    public void PlayEscapeSound()
+    {
+        return; //bad fish has no escape sound
     }
 
     void FixedUpdate()

@@ -12,7 +12,13 @@ public class Annihilate : MonoBehaviour {
             other.gameObject.GetComponent<SpriteRenderer>().enabled = false;
 
             //play escape sound
-            other.gameObject.GetComponent<Fish>().PlayEscapeSound();
+            Fish f = other.gameObject.GetComponent<Fish>();
+            if (f != null)
+                f.PlayEscapeSound();
+
+            OldFish of = other.gameObject.GetComponent<OldFish>();
+            if(of != null)
+                of.PlayEscapeSound();
 
             //update score
             GameObject spammy = GameObject.Find("MrSpammy");

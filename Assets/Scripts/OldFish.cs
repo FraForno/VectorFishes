@@ -2,41 +2,29 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Fish : MonoBehaviour {
+public class OldFish : MonoBehaviour
+{
 
-    public Vector2 velocity = new Vector2(2, 0);
+    public Vector2 velocity = new Vector2(1, 0);
     public float UpdateFreq = 1.0f; //movement update frequency in seconds
     public float Intensity = 0.5f; //vertical movement intensity
     public float turnSpeed = 1.0f; //rotation speed
     public float flipFreq = 3.0f;
 
-    public AudioClip[] clips = new AudioClip[3];
+    public AudioClip clip;
     public AudioClip escapeclip;
-    public Sprite[] sprites = new Sprite[3];
-    public uint[] points = { 10, 20, 30 };
+    public uint[] points = { 10, 20, 30, 30, 40, 50, 60, 70, 80 };
 
     public GameObject deadFish;
     public Object rewardPrefab;
 
     int flip = 1;
-    int fishType = 0;
+    int iFishType;
     bool bDead = false;
 
     void Start()
     {
         //rewardPrefab = Resources.Load("Prefabs/Reward");
-
-        //random fish type
-        int perc = Random.Range(0, 100);
-
-        if (perc <= 50) //0-50% spwans yellow (50%)
-            fishType = 0;
-        else if (perc <= 80) //51-80% spawns red (30%)
-            fishType = 1;
-        else //81-100% spawans green (20%)
-            fishType = 2;
-
-        this.GetComponent<SpriteRenderer>().sprite = sprites[fishType];
 
         // 50% chance of starting with rightwards motion
         if (Random.value > 0.5f)
@@ -44,18 +32,20 @@ public class Fish : MonoBehaviour {
             transform.Rotate(new Vector3(0, 180, 0));
             flip = -1;
         }
-        
+
         this.GetComponent<Rigidbody2D>().velocity = (velocity * flip);
 
         InvokeRepeating("UpdateFishVel", UpdateFreq, UpdateFreq);
 
         InvokeRepeating("FlipFish", flipFreq, flipFreq);
+
+        InvokeRepeating("UpdateSCore", 2.0f, 2.5f);
     }
 
     void UpdateFishVel()
     {
         //update vertical movement
-        Vector2 updVel = new Vector2(0, Random.Range(Intensity*-1, Intensity));
+        Vector2 updVel = new Vector2(0, Random.Range(Intensity * -1, Intensity));
         this.GetComponent<Rigidbody2D>().velocity += updVel;
     }
 
@@ -66,6 +56,15 @@ public class Fish : MonoBehaviour {
             flip = flip * -1;
             this.GetComponent<Rigidbody2D>().velocity = (velocity * flip);
         }
+    }
+
+    void UpdateSCore()
+    {
+        if(iFishType < 8)
+            iFishType++;
+
+        if (iFishType == 3) //bad, bad code.... bad bad bad :(
+            iFishType++;
     }
 
     public void PlayEscapeSound()
@@ -82,7 +81,7 @@ public class Fish : MonoBehaviour {
         return rw;
     }
 
-    void FixedUpdate ()
+    void FixedUpdate()
     {
         //rotate fish along movement vector
         if (this.GetComponent<Rigidbody2D>().velocity != Vector2.zero)
@@ -95,7 +94,7 @@ public class Fish : MonoBehaviour {
             //around the Y axis so that rotation must be taken into account when lerping
             //also the angle between the X axis and a "left-pointing" velocity vector must be 
             //corrected by subtracting 180 degrees
-            this.transform.rotation = Quaternion.Lerp(this.transform.rotation, Quaternion.AngleAxis(angle - ((flip == 1) ? 0 : 180), Vector3.forward) * ((flip==1) ? Quaternion.identity : Quaternion.AngleAxis(180.0f, Vector3.up)), Time.deltaTime * turnSpeed);
+            this.transform.rotation = Quaternion.Lerp(this.transform.rotation, Quaternion.AngleAxis(angle - ((flip == 1) ? 0 : 180), Vector3.forward) * ((flip == 1) ? Quaternion.identity : Quaternion.AngleAxis(180.0f, Vector3.up)), Time.deltaTime * turnSpeed);
         }
 
         //check for touch
@@ -105,9 +104,6 @@ public class Fish : MonoBehaviour {
         {
             if (aList[i].phase == TouchPhase.Began)
             {
-                //int layerMask = 1 << LayerMask.NameToLayer("Fish");
-                //RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(aList[i].position), Vector2.zero, Mathf.Infinity, layerMask);
-                //if (hit.collider != null)
                 Vector3 wp = Camera.main.ScreenToWorldPoint(aList[i].position);
                 Vector2 touchPos = new Vector2(wp.x, wp.y);
                 if (this.GetComponent<BoxCollider2D>() == Physics2D.OverlapPoint(touchPos))
@@ -115,11 +111,9 @@ public class Fish : MonoBehaviour {
                     if (!bDead)
                     {
                         bDead = true;
-                            
-                        //play audio
-                        int j = Random.Range(0, 3);
 
-                        this.GetComponent<AudioSource>().clip = clips[j];
+                        //play audio
+                        this.GetComponent<AudioSource>().clip = clip;
                         this.GetComponent<AudioSource>().Play();
 
                         //hide
@@ -129,15 +123,15 @@ public class Fish : MonoBehaviour {
                         Instantiate(deadFish, this.transform.position, this.transform.rotation);
 
                         //put points in place
-                        InstantiateAndInitReward(fishType, this.transform.position + new Vector3(0, 1, 0), Quaternion.identity);
+                        InstantiateAndInitReward(iFishType, this.transform.position + new Vector3(0, 1, 0), Quaternion.identity);
 
                         //remove as soon as clip ends
-                        Destroy(this.gameObject, clips[j].length);
+                        Destroy(this.gameObject, clip.length);
 
                         //update score
                         GameObject spammy = GameObject.Find("MrSpammy");
                         Generator spammyscript = spammy.GetComponent<Generator>();
-                        spammyscript.score += points[fishType];
+                        spammyscript.score += points[iFishType];
                     }
                 }
             }

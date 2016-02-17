@@ -7,7 +7,7 @@ public class Reward : MonoBehaviour {
     public float UpdateFreq = 1.0f; //movement update frequency in seconds
     public float Intensity = 0.5f; //horizontal movement intensity
 
-    public Sprite[] sprites = new Sprite[4];
+    public Sprite[] sprites = new Sprite[9];
     public int fishType = 0;
 
     private int signInverter = 1;

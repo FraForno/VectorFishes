@@ -10,6 +10,7 @@ public class Generator : MonoBehaviour {
 
     public GameObject fish;
     public GameObject badfish;
+    public GameObject oldfish;
     public float FishRangeX = 6.5f;
     public float FishRangeY = 5f;
     public float FishGenDelay = 2.0f;
@@ -25,6 +26,7 @@ public class Generator : MonoBehaviour {
         //InvokeRepeating("CreateFish", FishGenDelay, FishGenDelay);
         StartCoroutine("CreateFish");
         InvokeRepeating("CreateBadFish", BadFishGenDelay, BadFishGenDelay);
+        InvokeRepeating("CreateOldFish", BadFishGenDelay + (BadFishGenDelay / 2), BadFishGenDelay);
     }
 
     void Update()
@@ -60,6 +62,11 @@ public class Generator : MonoBehaviour {
     void CreateBadFish()
     {
         Instantiate(badfish, new Vector3(Random.Range(FishRangeX * -1, FishRangeX), Random.Range(FishRangeY * -1, FishRangeY), 0), Quaternion.identity);
+    }
+
+    void CreateOldFish()
+    {
+        Instantiate(oldfish, new Vector3(Random.Range(FishRangeX * -1, FishRangeX), Random.Range(FishRangeY * -1, FishRangeY), 0), Quaternion.identity);
     }
 
     void OnGUI()
